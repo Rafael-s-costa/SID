@@ -61,7 +61,7 @@ public class JDBC_Connection extends Thread {
 						Bson updateOperationDocument = new Document("$set", newValue);
 						colecao.updateOne(str, updateOperationDocument);
 						
-						System.out.println("Teste");//blabla
+						
 
 					}
 				}
