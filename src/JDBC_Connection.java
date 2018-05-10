@@ -1,7 +1,7 @@
-//Importações para Sybase
+//Importaï¿½ï¿½es para Sybase
 import java.sql.*;
 import sybase.jdbc4.sqlanywhere.*;
-//Importações Java
+//Importaï¿½ï¿½es Java
 import java.io.File;
 import java.io.IOException;
 import java.io.FileWriter;
@@ -55,13 +55,13 @@ public class JDBC_Connection extends Thread {
 								str.get("valormedicaotemperatura"), str.get("valormedicaohumidade"));// Cria objecto
 
 						System.out.println(str);
-						listMedicao.add(m); // Adiciona objecto à lista
+						listMedicao.add(m); // Adiciona objecto ï¿½ lista
 
 						Bson newValue = new Document("migrado", 1);// update migrado
 						Bson updateOperationDocument = new Document("$set", newValue);
 						colecao.updateOne(str, updateOperationDocument);
 						
-						System.out.println("Teste");
+						System.out.println("Teste");//blabla
 
 					}
 				}
