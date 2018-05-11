@@ -1,19 +1,9 @@
-//Importaï¿½ï¿½es para Sybase
 import java.sql.*;
 import sybase.jdbc4.sqlanywhere.*;
-//Importaï¿½ï¿½es Java
-import java.io.File;
-import java.io.IOException;
-import java.io.FileWriter;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.util.*;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import com.mongodb.*;
 import com.mongodb.client.MongoCollection;
@@ -30,7 +20,7 @@ public class JDBC_Connection extends Thread {
 	ArrayList<Medicao> listMedicao = new ArrayList<Medicao>();
 	final String NOMEDB = "SensorDB";
 	final String NOMECOL = "Medicoes";
-	
+
 
 	public JDBC_Connection() {
 
@@ -38,6 +28,8 @@ public class JDBC_Connection extends Thread {
 		db = mongodb.getDatabase(NOMEDB);// nome da base de dados no mongo
 		colecao = db.getCollection(NOMECOL);// nome da colecao
 		System.out.println(db.getCollection(NOMECOL).count());
+		//System.setProperty("java.library.path","C:\\Program Files\\SQL Anywhere 12\\Bin64");
+
 	}
 
 	public void run() {
@@ -47,10 +39,10 @@ public class JDBC_Connection extends Thread {
 				while (cursor.hasNext()) {
 					Document str = cursor.next();
 
-					if (str.get("migrado").equals(0)) {
+					if (str.get("migrado").equals(1)) {
 						System.out.println(str.get("migrado").getClass());
 
-						
+
 						Medicao m = new Medicao(str.get("datapassagem"), str.get("horapassagem"),
 								str.get("valormedicaotemperatura"), str.get("valormedicaohumidade"));// Cria objecto
 
@@ -60,16 +52,34 @@ public class JDBC_Connection extends Thread {
 						Bson newValue = new Document("migrado", 1);// update migrado
 						Bson updateOperationDocument = new Document("$set", newValue);
 						colecao.updateOne(str, updateOperationDocument);
-						
-						
 
+						//SYBASE
+						String dburl = "jdbc:sqlanywhere:uid=dba;pwd=sql;database=MonitorizaçãoDeBaseDeDados;";
+						//links=tcpip(host=127.0.0.1)
+						Connection con = DriverManager.getConnection(dburl);
+
+						Statement stmt = con.createStatement();
+
+						ResultSet rs = stmt.executeQuery(
+								"SELECT * FROM Investigador");
+
+						while (rs.next())
+						{
+							//int value = rs.getInt(1);
+							String Email = rs.getString(1);
+							String NomeInvestigador = rs.getString(2);
+							System.out.println("Email"+" "+Email+" "+ "NomeInvestigador " +NomeInvestigador);
+						}
+						rs.close();
+						stmt.close();
+						con.close();
 					}
 				}
-			} finally {
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}finally {
 				cursor.close();
 			}
-
-			System.out.println("VAI LER LISTA");
 			/*for (Medicao m : listMedicao) { // percorre a lista e vai mandar a lista para o sybase \\
 				System.out.println(m.getDataMedicao());
 			}*/
@@ -88,9 +98,9 @@ public class JDBC_Connection extends Thread {
 
 
 
-public static void main(String[] args) {
-	JDBC_Connection conn = new JDBC_Connection();
-	conn.start();
-}
+	public static void main(String[] args) {
+		JDBC_Connection conn = new JDBC_Connection();
+		conn.start();
+	}
 
 }

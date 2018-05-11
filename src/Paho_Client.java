@@ -71,7 +71,7 @@ public class Paho_Client implements MqttCallback {
 
 			JSONParser parser = new JSONParser();
 			JSONObject obj = (JSONObject) parser.parse(message.toString());
-
+			
 			novo.put(datapassagem, obj.get(datapassagem));
 			novo.put(horapassagem, obj.get(horapassagem));
 			novo.put(valormedicaotemperatura, obj.get(valormedicaotemperatura));
