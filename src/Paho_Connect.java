@@ -16,8 +16,10 @@ public class Paho_Connect {
 	
     public static void main(String[] args) {
 
-        String topic        = "iscte_sid_2016_S1";
-        String content      = " {\"sensor\":\"7\",  \"datapassagem\":\"2018/12/12\" ,   \"horapassagem\":\"18:45:24\", \"valormedicaotemperatura\":12, \"valormedicaohumidade\":20}";
+        //String topic        = "iscte_sid_2016_S1";
+    	String topic        = "sid_lab_2018";
+        //String content      = "{“temperature”:”34”, “humidity”: “35”, “date”: “33/22/1002”, “time”: “21:10:55”}";
+    	String content      = "{\"temperature\":\"34\", \"humidity\": \"35\", \"date\": \"33/22/1002\", \"time\": \"21:10:55\"}";
         int qos             = 0;
         String broker       = "tcp://iot.eclipse.org:1883";
         String clientId     = "JavaSample";

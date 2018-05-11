@@ -28,7 +28,7 @@ public class Paho_Client implements MqttCallback {
 	private MongoClient mongodb;
 	final String NOMEDB = "SensorDB";
 	final String NOMECOL = "Medicoes";
-	final String TOPIC = "iscte_sid_2016_S1";
+	final String TOPIC = "sid_lab_2018";
 	String datapassagem = "datapassagem", horapassagem = "horapassagem",
 			valormedicaotemperatura = "valormedicaotemperatura", valormedicaohumidade = "valormedicaohumidade",
 			migrado = "migrado";

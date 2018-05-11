@@ -3,39 +3,41 @@ import java.sql.Timestamp;
 
 public class Medicao {
 
-	private Timestamp dataMedicao;
-	private Time horaMedicao;
-	private float valorMedicaoTemperatura;
-	private float valorMedicaoHumidade;
+	private Timestamp date;
+	private Time time;
+	private float temperature;
+	private float humidity;
 	private int id;
 	
-	public Medicao(Timestamp dataMedicao, Time horaMedicao, 
-		float valorMedicaoTemperatura, float valorMedicaoHumidade, int id) {
-		this.dataMedicao = dataMedicao;
-		this.horaMedicao = horaMedicao;
-		this.valorMedicaoHumidade = valorMedicaoHumidade;
-		this.valorMedicaoTemperatura = valorMedicaoTemperatura;
+	public Medicao(Timestamp dataMedicao, Time horaMedicao, float valorMedicaoTemperatura, float valorMedicaoHumidade, int id) {
+		this.date = dataMedicao;
+		this.time = horaMedicao;
+		this.humidity = valorMedicaoHumidade;
+		this.temperature = valorMedicaoTemperatura;
 		this.id = id;
 	}
 
-	public Medicao(Object object, Object object2, Object object3, Object object4) {
-		
+	public Medicao(Object dataMedicao, Object horaMedicao, Object valorMedicaoTemperatura, Object valorMedicaoHumidade) {
+		this.date = Timestamp.valueOf(dataMedicao.toString());
+		this.time = Time.valueOf(horaMedicao.toString());
+		this.humidity = Float.valueOf(valorMedicaoHumidade.toString());
+		this.temperature = Float.valueOf(valorMedicaoTemperatura.toString());
 	}
 
 	public void setDataMedicao(Timestamp dataMedicao) {
-		this.dataMedicao = dataMedicao;
+		this.date = dataMedicao;
 	}
 
 	public void setHoraMedicao(Time horaMedicao) {
-		this.horaMedicao = horaMedicao;
+		this.time = horaMedicao;
 	}
 
 	public void setValorMedicaoTemperatura(float valorMedicaoTemperatura) {
-		this.valorMedicaoTemperatura = valorMedicaoTemperatura;
+		this.temperature = valorMedicaoTemperatura;
 	}
 
 	public void setValorMedicaoHumidade(float valorMedicaoHumidade) {
-		this.valorMedicaoHumidade = valorMedicaoHumidade;
+		this.humidity = valorMedicaoHumidade;
 	}
 
 	public void setId(int id) {
@@ -43,19 +45,19 @@ public class Medicao {
 	}
 
 	public Timestamp getDataMedicao() {
-		return dataMedicao;
+		return date;
 	}
 
 	public Time getHoraMedicao() {
-		return horaMedicao;
+		return time;
 	}
 
 	public float getValorMedicaoTemperatura() {
-		return valorMedicaoTemperatura;
+		return temperature;
 	}
 
 	public float getValorMedicaoHumidade() {
-		return valorMedicaoHumidade;
+		return humidity;
 	}
 
 	public int getId() {
