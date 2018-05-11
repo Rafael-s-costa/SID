@@ -26,19 +26,16 @@ public class Paho_Client implements MqttCallback {
 	private Vector ArrivedData = new Vector();
 	private MqttClient client;
 	private MongoClient mongodb;
-	final String NOMEDB = "SensorDB";
-	final String NOMECOL = "Medicoes";
+	final String NOMEDB = "HumidadeTemperatura"; // HumidadeTemperatura e SensorDB
+	final String NOMECOL = "HumidadeTemp"; // HumidadeTemp e Medicoes
 	final String TOPIC = "sid_lab_2018";
-	String datapassagem = "datapassagem", horapassagem = "horapassagem",
-			valormedicaotemperatura = "valormedicaotemperatura", valormedicaohumidade = "valormedicaohumidade",
-			migrado = "migrado";
+	String temperature = "temperature", humidity = "humidity", date = "date", time = "time", migrado = "migrado";
 
 	public Paho_Client(String ipaddress, String clientID) {
 		try {
 			client = new MqttClient(ipaddress, clientID);
 			client.connect();
 			client.setCallback(this);
-			//client.subscribe("iscte_sid_2016_S1");
 			client.subscribe(TOPIC);
 		} catch (MqttException e) {
 			// TODO Auto-generated catch block
@@ -48,7 +45,7 @@ public class Paho_Client implements MqttCallback {
 
 	@Override
 	public void connectionLost(Throwable arg0) {
-		// TODO Auto-generated method stub
+		System.out.println("Connection was lost");
 
 	}
 
@@ -61,7 +58,9 @@ public class Paho_Client implements MqttCallback {
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 		ArrivedData.add(message.toString());
-		System.out.println(message.toString());
+		String messageReceived = message.toString().replace("“", "\"");
+		String messageToParse = messageReceived.replace("”", "\"");
+		System.out.println(messageToParse);
 		try {
 			// parametros passados
 			mongodb = new MongoClient("localhost", 27017);
@@ -70,24 +69,26 @@ public class Paho_Client implements MqttCallback {
 			Document novo = new Document();
 
 			JSONParser parser = new JSONParser();
-			JSONObject obj = (JSONObject) parser.parse(message.toString());
-			
-			novo.put(datapassagem, obj.get(datapassagem));
-			novo.put(horapassagem, obj.get(horapassagem));
-			novo.put(valormedicaotemperatura, obj.get(valormedicaotemperatura));
-			novo.put(valormedicaohumidade, obj.get(valormedicaohumidade));
+			JSONObject obj = (JSONObject) parser.parse(messageToParse);
+
+			novo.put(temperature, obj.get(temperature));
+			novo.put(humidity, obj.get(humidity));
+			novo.put(date, obj.get(date));
+			novo.put(time, obj.get(time));
 			novo.put(migrado, 0);
 
 			colecao.insertOne(novo);
 			mongodb.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.out.println("erro de parse");
 		}
 	}
 
-	public static void main(String[] a){
+	public static void main(String[] a) {
 		Paho_Client app = new Paho_Client("tcp://iot.eclipse.org:1883", "testestetsetse");
-		while(true);
+		while (true)
+			;
 	}
 
 }
