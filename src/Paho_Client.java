@@ -29,6 +29,7 @@ public class Paho_Client implements MqttCallback {
 	final String NOMEDB = "HumidadeTemperatura"; // HumidadeTemperatura e SensorDB
 	final String NOMECOL = "HumidadeTemp"; // HumidadeTemp e Medicoes
 	final String TOPIC = "sid_lab_2018";
+	//final String TOPIC = "iscte_sid_2016_S1";
 	String temperature = "temperature", humidity = "humidity", date = "date", time = "time", migrado = "migrado";
 
 	public Paho_Client(String ipaddress, String clientID) {
@@ -58,9 +59,9 @@ public class Paho_Client implements MqttCallback {
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 		ArrivedData.add(message.toString());
-		String messageReceived = message.toString().replace("‚Äú", "\"");
-		String messageToParse = messageReceived.replace("‚Äù", "\"");
-		System.out.println(messageToParse);
+		//String messageReceived = message.toString().replace("ì", "\"");
+		//String messageToParse = messageReceived.replace("î", "\"");
+		System.out.println(message.toString());
 		try {
 			// parametros passados
 			mongodb = new MongoClient("localhost", 27017);
@@ -69,7 +70,7 @@ public class Paho_Client implements MqttCallback {
 			Document novo = new Document();
 
 			JSONParser parser = new JSONParser();
-			JSONObject obj = (JSONObject) parser.parse(messageToParse);
+			JSONObject obj = (JSONObject) parser.parse(message.toString());
 
 			novo.put(temperature, obj.get(temperature));
 			novo.put(humidity, obj.get(humidity));
