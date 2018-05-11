@@ -1,4 +1,5 @@
 import java.sql.*;
+
 import sybase.jdbc4.sqlanywhere.*;
 import java.util.*;
 
@@ -20,6 +21,8 @@ public class JDBC_Connection extends Thread {
 	ArrayList<Medicao> listMedicao = new ArrayList<Medicao>();
 	final String NOMEDB = "SensorDB";
 	final String NOMECOL = "Medicoes";
+	final String DBURL = "jdbc:sqlanywhere:uid=dba;pwd=sql;database=MonitorizaçãoDeBaseDeDados;";
+	//links=tcpip(host=127.0.0.1)
 
 
 	public JDBC_Connection() {
@@ -42,7 +45,6 @@ public class JDBC_Connection extends Thread {
 					if (str.get("migrado").equals(1)) {
 						System.out.println(str.get("migrado").getClass());
 
-
 						Medicao m = new Medicao(str.get("datapassagem"), str.get("horapassagem"),
 								str.get("valormedicaotemperatura"), str.get("valormedicaohumidade"));// Cria objecto
 
@@ -52,41 +54,35 @@ public class JDBC_Connection extends Thread {
 						Bson newValue = new Document("migrado", 1);// update migrado
 						Bson updateOperationDocument = new Document("$set", newValue);
 						colecao.updateOne(str, updateOperationDocument);
-
-						//SYBASE
-						String dburl = "jdbc:sqlanywhere:uid=dba;pwd=sql;database=MonitorizaçãoDeBaseDeDados;";
-						//links=tcpip(host=127.0.0.1)
-						Connection con = DriverManager.getConnection(dburl);
-
-						Statement stmt = con.createStatement();
-
-						ResultSet rs = stmt.executeQuery(
-								"SELECT * FROM Investigador");
-
-						while (rs.next())
-						{
-							//int value = rs.getInt(1);
-							String Email = rs.getString(1);
-							String NomeInvestigador = rs.getString(2);
-							System.out.println("Email"+" "+Email+" "+ "NomeInvestigador " +NomeInvestigador);
-						}
-						rs.close();
-						stmt.close();
-						con.close();
 					}
 				}
+
+				for (Medicao m : listMedicao) { // percorre a lista e vai mandar a lista para o sybase \\
+					Connection con = DriverManager.getConnection(DBURL);
+
+					Statement stmt = con.createStatement();
+
+					ResultSet rs = stmt.executeQuery("select (isnull(max(IDMedição),0) + 1) from HumidadeTemperatura;");
+					String id;
+					while(rs.next()) {
+						id = rs.getString(1);
+						m.setId(id);
+					}
+					stmt.executeUpdate(m.InsertStatement());
+					rs.close();
+					stmt.close();
+					con.close();
+				}
+
+				// CONECTO AO SYBASE
+				// ENVIO OS ELEMENTOS DA LISTA DE OBJETOS AO SYBASE
+				// ??PASSO OS ELEMENTOS DA LISTA PARA UMA AUXILIAR E LIMPO A ORIGINAL???	
+
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}finally {
 				cursor.close();
 			}
-			/*for (Medicao m : listMedicao) { // percorre a lista e vai mandar a lista para o sybase \\
-				System.out.println(m.getDataMedicao());
-			}*/
-
-			// CONECTO AO SYBASE
-			// ENVIO OS ELEMENTOS DA LISTA DE OBJETOS AO SYBASE
-			// ??PASSO OS ELEMENTOS DA LISTA PARA UMA AUXILIAR E LIMPO A ORIGINAL???
 			try {
 				Thread.sleep(PERIOCITY);
 			} catch (InterruptedException e) {
