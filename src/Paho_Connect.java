@@ -16,15 +16,16 @@ public class Paho_Connect {
 	
     public static void main(String[] args) {
 
-        //String topic        = "iscte_sid_2016_S1";
-    	String topic        = "sid_lab_2018";
+        String topic        = "iscte_sid_2016_S1";
+    	//String topic        = "sid_lab_2018";
         //String content      = "{“temperature”:”34”, “humidity”: “35”, “date”: “33/22/1002”, “time”: “21:10:55”}";
-    	String content      = "{\"temperature\":\"34\", \"humidity\": \"35\", \"date\": \"33/22/1002\", \"time\": \"21:10:55\"}";
+    	//String content      = "{\"temperature\":\"34\", \"humidity\": \"35\", \"date\": \"33/22/1002\", \"time\": \"21:10:55\"}";
+        String content      = "{\"valormedicaotemperatura\":\"34\", \"valormedicaohumidade\": \"35\", \"datapassagem\": \"33/22/1002\", \"horapassagem\": \"21:10:55\"}";
         int qos             = 0;
         String broker       = "tcp://iot.eclipse.org:1883";
         String clientId     = "JavaSample";
         MemoryPersistence persistence = new MemoryPersistence();
-
+        while(true){
         try {
             MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
             MqttConnectOptions connOpts = new MqttConnectOptions();
@@ -40,7 +41,8 @@ public class Paho_Connect {
             System.out.println(topic + " " + message);
             sampleClient.disconnect();
             System.out.println("Disconnected");
-            System.exit(0);
+            Thread.sleep(5000);
+            //System.exit(0);
         } catch(MqttException me) {
             System.out.println("reason "+me.getReasonCode());
             System.out.println("msg "+me.getMessage());
@@ -48,6 +50,10 @@ public class Paho_Connect {
             System.out.println("cause "+me.getCause());
             System.out.println("excep "+me);
             me.printStackTrace();
+        } catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         }
     }
 	

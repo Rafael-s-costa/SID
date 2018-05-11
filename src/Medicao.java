@@ -1,68 +1,61 @@
-import java.sql.Time;
-import java.sql.Timestamp;
-
 public class Medicao {
-
-	private Timestamp date;
-	private Time time;
-	private float temperature;
-	private float humidity;
-	private int id;
 	
-	public Medicao(Timestamp dataMedicao, Time horaMedicao, float valorMedicaoTemperatura, float valorMedicaoHumidade, int id) {
-		this.date = dataMedicao;
-		this.time = horaMedicao;
-		this.humidity = valorMedicaoHumidade;
-		this.temperature = valorMedicaoTemperatura;
-		this.id = id;
+	private String date;
+	private String time;
+	private String temperature;
+	private String humidity;
+	private String id;
+	
+	public Medicao(Object date, Object time, Object temperature, Object humidity) {
+		super();
+		this.date = date.toString();
+		this.time = time.toString();
+		this.temperature = temperature.toString();
+		this.humidity = humidity.toString();
+		
 	}
 
-	public Medicao(Object dataMedicao, Object horaMedicao, Object valorMedicaoTemperatura, Object valorMedicaoHumidade) {
-		this.date = Timestamp.valueOf(dataMedicao.toString());
-		this.time = Time.valueOf(horaMedicao.toString());
-		this.humidity = Float.valueOf(valorMedicaoHumidade.toString());
-		this.temperature = Float.valueOf(valorMedicaoTemperatura.toString());
-	}
-
-	public void setDataMedicao(Timestamp dataMedicao) {
-		this.date = dataMedicao;
-	}
-
-	public void setHoraMedicao(Time horaMedicao) {
-		this.time = horaMedicao;
-	}
-
-	public void setValorMedicaoTemperatura(float valorMedicaoTemperatura) {
-		this.temperature = valorMedicaoTemperatura;
-	}
-
-	public void setValorMedicaoHumidade(float valorMedicaoHumidade) {
-		this.humidity = valorMedicaoHumidade;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public Timestamp getDataMedicao() {
+	public String getDate() {
 		return date;
 	}
 
-	public Time getHoraMedicao() {
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+	public String getTime() {
 		return time;
 	}
 
-	public float getValorMedicaoTemperatura() {
+	public void setTime(String time) {
+		this.time = time;
+	}
+
+	public String getTemperature() {
 		return temperature;
 	}
 
-	public float getValorMedicaoHumidade() {
+	public void setTemperature(String temperature) {
+		this.temperature = temperature;
+	}
+
+	public String getHumidity() {
 		return humidity;
 	}
 
-	public int getId() {
+	public void setHumidity(String humidity) {
+		this.humidity = humidity;
+	}
+
+	public String getId() {
 		return id;
 	}
-	
-	
+
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String InsertStatement() {
+		return "INSERT INTO HumidadeTemperatura(IDMedição, DataMedição, HoraMedição, ValorMediçãoTemperatura, ValorMediçãoHumidade) "
+				+ "VALUES ('" + id +"', '" + date + "', '" + time + "', '" + temperature + "', '" + humidity + "');";
+	}
 }
