@@ -26,18 +26,22 @@ public class Paho_Client implements MqttCallback {
 	private Vector ArrivedData = new Vector();
 	private MqttClient client;
 	private MongoClient mongodb;
-	final String NOMEDB = "HumidadeTemperatura"; // HumidadeTemperatura e SensorDB
-	final String NOMECOL = "HumidadeTemp"; // HumidadeTemp e Medicoes
-	final String TOPIC = "sid_lab_2018";
-	//final String TOPIC = "iscte_sid_2016_S1";
-	String temperature = "temperature", humidity = "humidity", date = "date", time = "time", migrado = "migrado";
-
+	final String NOMEDB = "SensorDB"; // HumidadeTemperatura e SensorDB
+	final String NOMECOL = "Medicoes"; // HumidadeTemp e Medicoes
+	//final String TOPIC = "sid_lab_2018";
+	final String TOPIC = "iscte_sid_2016_S1";
+	String temperature = "valormedicaotemperatura", humidity = "valormedicaohumidade", date = "datapassagem", time = "horapassagem", migrado = "migrado";
+	private long interval;
+	private ArrayList<Document> transfer_list = new ArrayList<>();
+	
+	
 	public Paho_Client(String ipaddress, String clientID) {
 		try {
 			client = new MqttClient(ipaddress, clientID);
 			client.connect();
 			client.setCallback(this);
 			client.subscribe(TOPIC);
+			interval = System.currentTimeMillis();
 		} catch (MqttException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -71,15 +75,25 @@ public class Paho_Client implements MqttCallback {
 
 			JSONParser parser = new JSONParser();
 			JSONObject obj = (JSONObject) parser.parse(message.toString());
-
+			
 			novo.put(temperature, obj.get(temperature));
 			novo.put(humidity, obj.get(humidity));
 			novo.put(date, obj.get(date));
 			novo.put(time, obj.get(time));
 			novo.put(migrado, 0);
-
-			colecao.insertOne(novo);
-			mongodb.close();
+			
+			transfer_list.add(novo);
+			  
+			if (System.currentTimeMillis() > interval + 30000)
+			  {
+				for(Document d : transfer_list) {
+					colecao.insertOne(d);
+				}
+			    transfer_list = new ArrayList<>();
+			    interval = System.currentTimeMillis();
+			    mongodb.close();
+			  }
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("erro de parse");
@@ -88,8 +102,6 @@ public class Paho_Client implements MqttCallback {
 
 	public static void main(String[] a) {
 		Paho_Client app = new Paho_Client("tcp://iot.eclipse.org:1883", "testestetsetse");
-		while (true)
-			;
 	}
 
 }
