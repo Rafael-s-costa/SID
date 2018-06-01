@@ -1,6 +1,5 @@
 import java.sql.*;
 
-import sybase.jdbc4.sqlanywhere.*;
 import java.util.*;
 
 import org.bson.Document;
@@ -41,13 +40,22 @@ public class JDBC_Connection extends Thread {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * TO-DO:
+	 * -Mudar comando find;
+	 * -Criar segunda ligação para atualizar estado de migração;
+	 * 
+	 * @see java.lang.Thread#run()
+	 */
 	public void run() {
 		while(true) {
 			MongoCursor<Document> cursor = colecao.find().iterator();
 			try {
 				while (cursor.hasNext()) {
 					Document str = cursor.next();
-					if (str.get("migrado").equals(0)) {
+					if (str.get("migrado").equals(1)) {
 						Medicao m = new Medicao(str.get("datapassagem"), str.get("horapassagem"),
 								str.get("valormedicaotemperatura"), str.get("valormedicaohumidade"));// Cria objecto
 
@@ -70,6 +78,7 @@ public class JDBC_Connection extends Thread {
 						id = rs.getString(1);
 						m.setId(id);
 					}
+					System.out.println(m.getDate());
 					stmt.executeUpdate(m.InsertStatement());
 					rs.close();
 					stmt.close();
@@ -83,6 +92,7 @@ public class JDBC_Connection extends Thread {
 
 			} catch (SQLException e) {
 				e.printStackTrace();
+				//listMedicao = new ArrayList<Medicao>();
 			}finally {
 				cursor.close();
 			}

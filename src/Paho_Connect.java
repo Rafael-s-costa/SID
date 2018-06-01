@@ -20,7 +20,7 @@ public class Paho_Connect {
     	//String topic        = "sid_lab_2018";
         //String content      = "{“temperature”:”34”, “humidity”: “35”, “date”: “33/22/1002”, “time”: “21:10:55”}";
     	//String content      = "{\"temperature\":\"34\", \"humidity\": \"35\", \"date\": \"33/22/1002\", \"time\": \"21:10:55\"}";
-        String content      = "{\"valormedicaotemperatura\":\"34\", \"valormedicaohumidade\": \"35\", \"datapassagem\": \"33/22/1002\", \"horapassagem\": \"21:10:55\"}";
+        String content      = "{\"valormedicaotemperatura\":\"30\", \"valormedicaohumidade\": \"10\", \"datapassagem\": \"13/5/2018\", \"horapassagem\": \"10:16:00\"}";
         int qos             = 0;
         String broker       = "tcp://iot.eclipse.org:1883";
         String clientId     = "JavaSample";

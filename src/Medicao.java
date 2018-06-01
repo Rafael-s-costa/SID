@@ -8,7 +8,10 @@ public class Medicao {
 	
 	public Medicao(Object date, Object time, Object temperature, Object humidity) {
 		super();
-		this.date = date.toString();
+		String aux = date.toString();
+		String[] aux1 = aux.split("/");
+		aux = aux1[2] + "-" + aux1[1] + "-" + aux1[0];
+		this.date = aux;
 		this.time = time.toString();
 		this.temperature = temperature.toString();
 		this.humidity = humidity.toString();
@@ -58,4 +61,5 @@ public class Medicao {
 		return "INSERT INTO HumidadeTemperatura(IDMedição, DataMedição, HoraMedição, ValorMediçãoTemperatura, ValorMediçãoHumidade) "
 				+ "VALUES ('" + id +"', '" + date + "', '" + time + "', '" + temperature + "', '" + humidity + "');";
 	}
+	
 }
