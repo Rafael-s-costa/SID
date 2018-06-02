@@ -20,7 +20,7 @@ public class JDBC_Connection extends Thread {
 	ArrayList<Medicao> listMedicao = new ArrayList<Medicao>();
 	final String NOMEDB = "SensorDB";
 	final String NOMECOL = "Medicoes";
-	final String DBURL = "jdbc:sqlanywhere:uid=dba;pwd=sql;database=MonitorizaçãoDeBaseDeDados;";
+	final String DBURL = "jdbc:sqlanywhere:uid=dba;pwd=sql;database=MonitorizacaoDeBaseDeDados;";
 	//links=tcpip(host=127.0.0.1)
 	Connection con;
 
@@ -55,10 +55,9 @@ public class JDBC_Connection extends Thread {
 			try {
 				while (cursor.hasNext()) {
 					Document str = cursor.next();
-					if (str.get("migrado").equals(1)) {
-						Medicao m = new Medicao(str.get("datapassagem"), str.get("horapassagem"),
-								str.get("valormedicaotemperatura"), str.get("valormedicaohumidade"));// Cria objecto
-
+					if (str.get("migrado").equals(0)) {
+						Medicao m = new Medicao(str.get("date"), str.get("time"),
+								str.get("temperature"), str.get("humidity"));// Cria objecto
 						listMedicao.add(m); // Adiciona objecto ï¿½ lista
 
 						Bson newValue = new Document("migrado", 1);// update migrado

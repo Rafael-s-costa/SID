@@ -6,6 +6,8 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.bson.Document;
@@ -28,13 +30,13 @@ public class Paho_Client implements MqttCallback {
 	private MongoClient mongodb;
 	final String NOMEDB = "SensorDB"; // HumidadeTemperatura e SensorDB
 	final String NOMECOL = "Medicoes"; // HumidadeTemp e Medicoes
-	//final String TOPIC = "sid_lab_2018";
-	final String TOPIC = "iscte_sid_2016_S1";
-	String temperature = "valormedicaotemperatura", humidity = "valormedicaohumidade", date = "datapassagem", time = "horapassagem", migrado = "migrado";
+	final String TOPIC = "sid_lab_2018";
+	//final String TOPIC = "iscte_sid_2016_S1";
+	String temperature = "temperature", humidity = "humidity", date = "date", time = "time", migrado = "migrado";
 	private long interval;
 	private ArrayList<Document> transfer_list = new ArrayList<>();
-	
-	
+
+
 	public Paho_Client(String ipaddress, String clientID) {
 		try {
 			client = new MqttClient(ipaddress, clientID);
@@ -75,29 +77,64 @@ public class Paho_Client implements MqttCallback {
 
 			JSONParser parser = new JSONParser();
 			JSONObject obj = (JSONObject) parser.parse(message.toString());
-			
-			novo.put(temperature, obj.get(temperature));
-			novo.put(humidity, obj.get(humidity));
-			novo.put(date, obj.get(date));
-			novo.put(time, obj.get(time));
-			novo.put(migrado, 0);
-			
-			transfer_list.add(novo);
-			  
+
+			if (isNumeric(obj.get(temperature).toString()) && isNumeric(obj.get(humidity).toString())
+					&& isValidDate(obj.get(date).toString()) && isValidHour(obj.get(time).toString())) {
+				novo.put(temperature, obj.get(temperature));
+				novo.put(humidity, obj.get(humidity));
+				novo.put(date, obj.get(date));
+				novo.put(time, obj.get(time));
+				novo.put(migrado, 0);
+
+				System.out.println("inserido");
+				transfer_list.add(novo);
+			}
+
 			if (System.currentTimeMillis() > interval + 30000)
-			  {
+			{
 				for(Document d : transfer_list) {
 					colecao.insertOne(d);
 				}
-			    transfer_list = new ArrayList<>();
-			    interval = System.currentTimeMillis();
-			    mongodb.close();
-			  }
-			
+				transfer_list = new ArrayList<>();
+				interval = System.currentTimeMillis();
+				mongodb.close();
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("erro de parse");
 		}
+	}
+
+	public static boolean isNumeric(String str) {
+		try {
+			double d = Double.parseDouble(str);
+		} catch (NumberFormatException nfe) {
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean isValidDate(String inDate) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		dateFormat.setLenient(false);
+		try {
+			dateFormat.parse(inDate.trim());
+		} catch (ParseException pe) {
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean isValidHour(String inDate) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+		dateFormat.setLenient(false);
+		try {
+			dateFormat.parse(inDate.trim());
+		} catch (ParseException pe) {
+			return false;
+		}
+		return true;
 	}
 
 	public static void main(String[] a) {
